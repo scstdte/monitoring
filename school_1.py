@@ -12,10 +12,12 @@ st.sidebar.header("User Authentication")
 USER_ROLE = st.sidebar.selectbox("Select Role", ["user", "admin"], index=0)
 
 # Check if school data file exists
+# Check if school data file exists
 district_school_data = pd.DataFrame()
 if os.path.exists(SCHOOL_DATA_FILE):
     try:
         district_school_data = pd.read_csv(SCHOOL_DATA_FILE, encoding="utf-8")
+        district_school_data.columns = district_school_data.columns.str.strip()  # Strip any leading/trailing whitespace
     except Exception as e:
         st.error(f"Error reading {SCHOOL_DATA_FILE}: {e}")
 else:
