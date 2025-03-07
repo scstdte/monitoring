@@ -13,6 +13,7 @@ USER_ROLE = st.sidebar.selectbox("Select Role", ["user", "admin"], index=0)
 
 # Check if school data file exists
 # Check if school data file exists
+# Check if school data file exists
 district_school_data = pd.DataFrame()
 if os.path.exists(SCHOOL_DATA_FILE):
     try:
@@ -23,20 +24,6 @@ if os.path.exists(SCHOOL_DATA_FILE):
 else:
     st.error(f"File '{SCHOOL_DATA_FILE}' not found. Please upload the correct file.")
 
-st.markdown("<h1 style='text-align: center; color: #007bff;'>📊 Monitoring Cell Dashboard</h1>", unsafe_allow_html=True)
-
-# Initialize session state attributes
-if "temp_data" not in st.session_state:
-    st.session_state.temp_data = []
-if "schools" not in st.session_state:
-    st.session_state.schools = []
-
-def reset_session_state():
-    st.session_state.temp_data = []
-    if os.path.exists(DATA_FILE):
-        os.remove(DATA_FILE)
-    st.success("Data reset successfully!")
-
 # Layout for Data Entry, Filters, and Reset Button
 col1, col2 = st.columns([3, 2])
 
@@ -44,16 +31,16 @@ with col1:
     st.sidebar.header("Data Entry")
     with st.sidebar.form("data_form"):
         team_member = st.selectbox("👤 Team Member", ["Anand Mohan", "A Srivastava", "Sajan Snehi", "Sumi Sindhi", "A Raghuvanshi", "Shyam Mishra", "Jeet Kumar", "Shiv Pandit", "Biren Kumar"])
-        
-        if "District" in district_school_data.columns:
+
+        if "District" in district_school_data.columns and "School" in district_school_data.columns:
             district_options = district_school_data["District"].dropna().unique().tolist() if not district_school_data.empty else []
             district = st.selectbox("📍 District", district_options)
-            
+
             schools = district_school_data[district_school_data["District"] == district]["School"].dropna().tolist() if not district_school_data.empty else []
             school_name = st.selectbox("🏫 School", schools)
         else:
-            st.error("Column 'District' not found in school data.")
-        
+            st.error("Columns 'District' or 'School' not found in school data.")
+
         metric_name = st.selectbox("📊 Metric", ["Cleanliness", "Assembly activities", "Presence of Students", "Teachers' presence", "New Edu Init Imp", "Co-curricular Act.", "Others"])
         value = st.text_input("📈 Value", placeholder="Enter metric value (text or number)")
         is_anomaly = st.checkbox("Is this an anomaly?")
@@ -63,15 +50,14 @@ with col1:
 if USER_ROLE == "admin":
     with col2:
         st.header("Filters")
-        if "District" in district_school_data.columns:
+        if "District" in district_school_data.columns and "School" in district_school_data.columns:
             selected_district = st.selectbox("Filter by District", ["All"] + list(district_school_data["District"].dropna().unique()) if not district_school_data.empty else ["All"])
             selected_school = st.selectbox("Filter by School", ["All"] + list(district_school_data["School"].dropna().unique()) if not district_school_data.empty else ["All"])
         else:
-            st.error("Column 'District' not found in school data.")
-        
+            st.error("Columns 'District' or 'School' not found in school data.")
+
         selected_metric = st.selectbox("Filter by Metric", ["All", "Cleanliness", "Assembly activities", "Presence of Students", "Teachers' presence", "New Edu Init Imp", "Co-curricular Act.", "Others"])
         st.button("Reset Data", on_click=reset_session_state)
-
     # Load Data
     if os.path.exists(DATA_FILE) and os.stat(DATA_FILE).st_size > 0:
         data = pd.read_csv(DATA_FILE)
