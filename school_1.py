@@ -5,7 +5,7 @@ import streamlit as st
 import plotly.express as px
 
 DATA_FILE = "monitoring_data.csv"
-SCHOOL_DATA_FILE = "School Names.csv"
+SCHOOL_DATA_FILE = "school name.csv"
 
 # User Role Selection
 st.sidebar.header("User Authentication")
