@@ -43,12 +43,15 @@ with col1:
     with st.sidebar.form("data_form"):
         team_member = st.selectbox("👤 Team Member", ["Anand Mohan", "A Srivastava", "Sajan Snehi", "Sumi Sindhi", "A Raghuvanshi", "Shyam Mishra", "Jeet Kumar", "Shiv Pandit", "Biren Kumar"])
         
-        district_options = district_school_data["District"].dropna().unique().tolist() if not district_school_data.empty else []
-        district = st.selectbox("📍 District", district_options)
+        if "District" in district_school_data.columns:
+            district_options = district_school_data["District"].dropna().unique().tolist() if not district_school_data.empty else []
+            district = st.selectbox("📍 District", district_options)
+            
+            schools = district_school_data[district_school_data["District"] == district]["School"].dropna().tolist() if not district_school_data.empty else []
+            school_name = st.selectbox("🏫 School", schools)
+        else:
+            st.error("Column 'District' not found in school data.")
         
-        schools = district_school_data[district_school_data["District"] == district]["School"].dropna().tolist() if not district_school_data.empty else []
-        school_name = st.selectbox("🏫 School", schools)
-
         metric_name = st.selectbox("📊 Metric", ["Cleanliness", "Assembly activities", "Presence of Students", "Teachers' presence", "New Edu Init Imp", "Co-curricular Act.", "Others"])
         value = st.text_input("📈 Value", placeholder="Enter metric value (text or number)")
         is_anomaly = st.checkbox("Is this an anomaly?")
@@ -58,8 +61,12 @@ with col1:
 if USER_ROLE == "admin":
     with col2:
         st.header("Filters")
-        selected_district = st.selectbox("Filter by District", ["All"] + list(district_school_data["District"].dropna().unique()) if not district_school_data.empty else ["All"])
-        selected_school = st.selectbox("Filter by School", ["All"] + list(district_school_data["School"].dropna().unique()) if not district_school_data.empty else ["All"])
+        if "District" in district_school_data.columns:
+            selected_district = st.selectbox("Filter by District", ["All"] + list(district_school_data["District"].dropna().unique()) if not district_school_data.empty else ["All"])
+            selected_school = st.selectbox("Filter by School", ["All"] + list(district_school_data["School"].dropna().unique()) if not district_school_data.empty else ["All"])
+        else:
+            st.error("Column 'District' not found in school data.")
+        
         selected_metric = st.selectbox("Filter by Metric", ["All", "Cleanliness", "Assembly activities", "Presence of Students", "Teachers' presence", "New Edu Init Imp", "Co-curricular Act.", "Others"])
         st.button("Reset Data", on_click=reset_session_state)
 
