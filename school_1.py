@@ -12,8 +12,6 @@ st.sidebar.header("User Authentication")
 USER_ROLE = st.sidebar.selectbox("Select Role", ["user", "admin"], index=0)
 
 # Check if school data file exists
-# Check if school data file exists
-# Check if school data file exists
 district_school_data = pd.DataFrame()
 if os.path.exists(SCHOOL_DATA_FILE):
     try:
@@ -58,6 +56,7 @@ if USER_ROLE == "admin":
 
         selected_metric = st.selectbox("Filter by Metric", ["All", "Cleanliness", "Assembly activities", "Presence of Students", "Teachers' presence", "New Edu Init Imp", "Co-curricular Act.", "Others"])
         st.button("Reset Data", on_click=reset_session_state)
+
     # Load Data
     if os.path.exists(DATA_FILE) and os.stat(DATA_FILE).st_size > 0:
         data = pd.read_csv(DATA_FILE)
