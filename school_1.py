@@ -7,6 +7,11 @@ import plotly.express as px
 DATA_FILE = "monitoring_data.csv"
 SCHOOL_DATA_FILE = "school name.csv"
 
+# Function to reset session state
+def reset_session_state():
+    for key in st.session_state.keys():
+        del st.session_state[key]
+
 # User Role Selection
 st.sidebar.header("User Authentication")
 USER_ROLE = st.sidebar.selectbox("Select Role", ["user", "admin"], index=0)
